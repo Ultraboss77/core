@@ -254,9 +254,9 @@ function mySqlIsHere() {
 
 function displayException($e) {
 	$message = '<span id="span_errorMessage">' . $e->getMessage() . '</span>';
-	if (DEBUG) {
-		$message .= '<a class="pull-right bt_errorShowTrace cursor">Show traces</a>';
-		$message .= '<br/><pre class="pre_errorTrace" style="display : none;">' . print_r($e->getTrace(), true) . '</pre>';
+	if (DEBUG !== 0) {
+		$message .= "<a class=\"pull-right bt_errorShowTrace cursor\" onclick=\"event.stopPropagation(); document.getElementById('pre_errorTrace').toggle()\">Show traces</a>";
+		$message .= '<br/><pre id="pre_errorTrace" style="display : none;">' . print_r($e->getTraceAsString(), true) . '</pre>';
 	}
 	return $message;
 }
@@ -885,7 +885,6 @@ function sizeFormat($size) {
  * @return boolean
  */
 function netMatch($network, $ip) {
-
 	$ip = trim($ip);
 	if ($ip == trim($network)) {
 		return true;
@@ -1555,7 +1554,9 @@ function pageTitle($_page) {
 }
 
 function cleanComponanteName($_name) {
-	return strip_tags(str_replace(array('&', '#', ']', '[', '%', "\\", "/", "'", '"', "*"), '', $_name));
+	$return =  strip_tags(str_replace(array('&', '#', ']', '[', '%', "\\", "/", "'", '"', "*"), '', $_name));
+	$return = preg_replace('/\s+/', ' ', $return);
+	return $return;
 }
 
 function startsWith($haystack, $needle) {
