@@ -15,6 +15,12 @@
 - Correction d'un soucis sur les dépendances nodejs lors des restauration [LIEN](https://github.com/jeedom/core/issues/2621). Note : cela va réduire la taille des backups
 - Correction d'un bug sur le système de mise à jour de la base de données [LIEN](https://github.com/jeedom/core/issues/2693)
 - Correction d'un soucis d'indexe manquant pour les interactions [LIEN](https://github.com/jeedom/core/issues/2694)
+- Amélioration du script sick.php pour mieux détecter les soucis de base de données [LIEN](https://github.com/jeedom/core/pull/2677)
+- Meilleurs gestion de python2 sur la page santé [LIEN](https://github.com/jeedom/core/pull/2674)
+- Amélioration du champs de selection des scénarios (avec recherche) dans les actions sur scénario [LIEN](https://github.com/jeedom/core/pull/2688)
+- Amélioration de la gestion des cron en prevision de php8 [LIEN](https://github.com/jeedom/core/issues/2698)
+- Amélioration de la fonction de gestion de l'arret des demons par le numero de port [LIEN](https://github.com/jeedom/core/pull/2697)
+- Correction d'un soucis sur certain navigateur avec les filtres [LIEN](https://github.com/jeedom/core/issues/2699)
 
 # 4.4.7
 
