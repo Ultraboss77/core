@@ -1425,7 +1425,7 @@ function unautorizedInDemo($_user = null) {
 }
 
 function checkAndFixCron($_cron) {
-	$return = $_cron;
+	$return = trim($_cron);
 	$return = str_replace('*/ ', '* ', $return);
 	preg_match_all('/([0-9]*\/\*)/m', $return, $matches, PREG_SET_ORDER, 0);
 	if (count($matches) > 0) {
@@ -1444,8 +1444,8 @@ function checkAndFixCron($_cron) {
 }
 
 function cronIsDue($_cron){
-	$schedule = explode(' ',$_cron);
-	if(count($schedule) == 6 && $schedule[5] != strtotime('Y')){
+	$schedule = explode(' ',trim($_cron));
+	if(count($schedule) == 6 && $schedule[5] != date('Y')){
 		return false;
 	}
 	$c = new Cron\CronExpression(checkAndFixCron($_cron), new Cron\FieldFactory);

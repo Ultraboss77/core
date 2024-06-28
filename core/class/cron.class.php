@@ -372,8 +372,8 @@ class cron {
 			return false;
 		}
 		try {
-			$schedule = explode(' ',$this->getSchedule());
-			if(count($schedule) == 6 && $schedule[5] != strtotime('Y')){
+			$schedule = explode(' ',trim($this->getSchedule()));
+			if(count($schedule) == 6 && $schedule[5] != date('Y')){
 				return false;
 			}
 			$c = new Cron\CronExpression(checkAndFixCron($this->getSchedule()), new Cron\FieldFactory);
