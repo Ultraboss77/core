@@ -148,7 +148,7 @@ try {
 			$cron = new cron();
 			$cron->setClass('jeedom');
 			$cron->setFunction('backup');
-			$cron->setSchedule(rand(10, 59) . ' 0' . rand(0, 7) . ' * * *');
+			$cron->setSchedule('03 4 * * *');
 			$cron->setEnable(1);
 			$cron->setDeamon(0);
 			$cron->setTimeout(60);
@@ -198,27 +198,27 @@ try {
 		if (!is_object($cron)) {
 			echo "Create jeedom::cronDaily\n";
 			$cron = new cron();
+			$cron->setClass('jeedom');
+			$cron->setFunction('cronDaily');
+			$cron->setSchedule('03 0 * * *');
+			$cron->setEnable(1);
+			$cron->setDeamon(0);
+			$cron->setTimeout(240);
+			$cron->save();
 		}
-		$cron->setClass('jeedom');
-		$cron->setFunction('cronDaily');
-		$cron->setSchedule(rand(0, 59) . ' ' . rand(0, 3) . ' * * *');
-		$cron->setEnable(1);
-		$cron->setDeamon(0);
-		$cron->setTimeout(240);
-		$cron->save();
 
 		$cron = cron::byClassAndFunction('jeedom', 'cronHourly');
 		if (!is_object($cron)) {
 			echo "Create jeedom::cronHourly\n";
 			$cron = new cron();
+			$cron->setClass('jeedom');
+			$cron->setFunction('cronHourly');
+			$cron->setSchedule('02 * * * *');
+			$cron->setEnable(1);
+			$cron->setDeamon(0);
+			$cron->setTimeout(60);
+			$cron->save();
 		}
-		$cron->setClass('jeedom');
-		$cron->setFunction('cronHourly');
-		$cron->setSchedule(rand(0, 59) . ' * * * *');
-		$cron->setEnable(1);
-		$cron->setDeamon(0);
-		$cron->setTimeout(60);
-		$cron->save();
 
 		$cron = cron::byClassAndFunction('jeedom', 'cron5');
 		if (!is_object($cron)) {
@@ -346,13 +346,13 @@ try {
 		if (!is_object($cron)) {
 			echo "Create history::archive\n";
 			$cron = new cron();
+			$cron->setClass('history');
+			$cron->setFunction('archive');
+			$cron->setSchedule('00 4 * * *');
+			$cron->setTimeout(240);
+			$cron->setDeamon(0);
+			$cron->save();
 		}
-		$cron->setClass('history');
-		$cron->setFunction('archive');
-		$cron->setSchedule('00 5 * * *');
-		$cron->setTimeout(240);
-		$cron->setDeamon(0);
-		$cron->save();
 
 		$cron = cron::byClassAndFunction('plugin', 'heartbeat');
 		if (!is_object($cron)) {
