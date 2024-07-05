@@ -192,6 +192,22 @@ class cache {
 		shell_exec('rm -rf ' . self::getFolder() . ' 2>&1 > /dev/null');
 	}
 
+
+	public static function flushWidget() {
+		foreach ((eqLogic::all()) as $eqLogic) {
+			try {
+				$eqLogic->emptyCacheWidget();
+			} catch (Exception $e) {
+			}
+		}
+		foreach ((scenario::all()) as $scenario) {
+			try {
+				$scenario->emptyCacheWidget();
+			} catch (Exception $e) {
+			}
+		}
+	}
+
 	public static function search() {
 		return array();
 	}

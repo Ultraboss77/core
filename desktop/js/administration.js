@@ -291,6 +291,23 @@ if (!jeeFrontEnd.administration) {
         }
       })
     },
+    flushWidgetCache: function() {
+      jeedom.cache.flushWidget({
+        error: function(error) {
+          jeedomUtils.showAlert({
+            message: error.message,
+            level: 'danger'
+          })
+        },
+        success: function(data) {
+          jeeP.updateCacheStats()
+          jeedomUtils.showAlert({
+            message: '{{Cache vidé}}',
+            level: 'success'
+          })
+        }
+      })
+    },
     cleanCache: function() {
       jeedom.cache.clean({
         error: function(error) {
@@ -1349,6 +1366,12 @@ document.getElementById('cachetab').addEventListener('click', function(event) {
         jeeP.flushCache()
       }
     })
+    return
+  }
+
+  if (_target = event.target.closest('#bt_flushWidgetCache')) {
+    jeedomUtils.hideAlert()
+    jeeP.flushWidgetCache()
     return
   }
 })
