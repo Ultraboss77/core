@@ -1384,7 +1384,7 @@ function decodeSessionData($_data) {
 
 function listSession() {
 	$return = array();
-	$sessions = explode("\n", com_shell::execute(system::getCmdSudo() . ' ls -t ' . session_save_path()));
+	$sessions = explode("\n", com_shell::execute(system::getCmdSudo() . ' find '.session_save_path().' -type f -size +0 -exec basename {} \; '));
 	if (count($sessions) > 100) {
 		throw new Exception(__('Trop de sessions, je ne peux pas lister :', __FILE__) . ' ' . count($sessions) . __('. Faire, pour les nettoyer :', __FILE__) . ' ' . '"sudo rm -rf ' . session_save_path() . ';sudo mkdir ' . session_save_path() . ';sudo chmod 777 ' . session_save_path() . '"');
 	}
