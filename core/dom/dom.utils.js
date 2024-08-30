@@ -562,9 +562,8 @@ domUtils.ajax = function(_params) {
       isJson ? _params.success(JSON.parse(request.responseText)) : _params.success(request.responseText)
     } else { //Weird thing happened
       if (_params.global) domUtils.DOMloading -= 1
-      domUtils.handleAjaxError(response, response.status, response.statusText)
-      if (_params.onError) _params.onError(error)
-      _params.onError('', '', error)
+      domUtils.handleAjaxError(request, request.status, request.responseText)
+      if (_params.onError) _params.onError(request)
     }
     _params.complete()
   } else { //Asynchronous request:
@@ -580,7 +579,7 @@ domUtils.ajax = function(_params) {
       referrerPolicy: 'no-referrer',
       mode: 'cors',
       credentials: 'same-origin',
-	    signal: domUtils.controller.signal,
+      signal: domUtils.controller.signal,
       //Safari AbortSignal.timeout not a function
       //signal: (_params.url == 'core/ajax/event.ajax.php' && _params.data.action == 'changes') ? null : AbortSignal.timeout(10000) //changes polling!
     })

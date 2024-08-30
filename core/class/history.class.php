@@ -249,13 +249,8 @@ class history {
 		if ($archiveDatetime === false) {
 			$archiveDatetime = date('Y-m-d H:i:s', strtotime('- 1 hours'));
 		}
-		$values = array(
-			'archiveDatetime' => $archiveDatetime,
-		);
-		$sql = 'SELECT DISTINCT(cmd_id)
-        FROM history
-        WHERE `datetime`<:archiveDatetime';
-		$list_sensors = DB::Prepare($sql, $values, DB::FETCH_TYPE_ALL);
+		$sql = '(SELECT DISTINCT(cmd_id) FROM history) UNION (SELECT DISTINCT(cmd_id) FROM historyArch)';
+		$list_sensors = DB::Prepare($sql, array(), DB::FETCH_TYPE_ALL);
 		foreach ($list_sensors as $sensors) {
 			try {
 				$cmd = cmd::byId($sensors['cmd_id']);
@@ -283,6 +278,8 @@ class history {
 						'datetime' => $purgeTime,
 					);
 					$sql = 'DELETE FROM historyArch WHERE cmd_id=:cmd_id AND `datetime` < :datetime';
+					DB::Prepare($sql, $values, DB::FETCH_TYPE_ROW);
+					$sql = 'DELETE FROM history WHERE cmd_id=:cmd_id AND `datetime` < :datetime';
 					DB::Prepare($sql, $values, DB::FETCH_TYPE_ROW);
 				}
 				if (!$JEEDOM_INTERNAL_CONFIG['cmd']['type']['info']['subtype'][$cmd->getSubType()]['isHistorized']['canBeSmooth'] || $cmd->getConfiguration('historizeMode', 'avg') == 'none') {
@@ -702,7 +699,7 @@ class history {
 	public static function getTendance($_cmd_id, $_startTime, $_endTime) {
 		$values = array();
 		foreach (self::all($_cmd_id, $_startTime, $_endTime) as $history) {
-			$values[] = $history->getValue();
+			$values[] = floatval($history->getValue());
 		}
 		if (count($values) == 0) {
 			$x_mean = 0;

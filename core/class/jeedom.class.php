@@ -24,6 +24,7 @@ class jeedom {
 
 	private static $jeedomConfiguration;
 	private static $jeedom_encryption = null;
+	private static $cache = array();
 
 	/*     * ***********************Methode static*************************** */
 
@@ -234,6 +235,9 @@ class jeedom {
 		$state = self::isDateOk();
 		$cache = cache::byKey('hour');
 		$lastKnowDate = $cache->getValue();
+		if($lastKnowDate === ""){
+			$lastKnowDate = 0;
+		}
 		$return[] = array(
 			'name' => __('Date système (dernière heure enregistrée)', __FILE__),
 			'state' => $state,
@@ -343,6 +347,15 @@ class jeedom {
 			'result' => $nb_active_connection['Value'] . '/' . $max_used_connection['Value'] . '/' . $allow_connection['Value'],
 			'comment' => '',
 			'key' => 'database::connexion'
+		);
+
+		$size = DB::Prepare('SELECT SUM(data_length + index_length) as size FROM information_schema.tables WHERE table_schema = \'jeedom\' GROUP BY table_schema;', array(), DB::FETCH_TYPE_ROW);
+		$return[] = array(
+			'name' => __('Taille base de données', __FILE__),
+			'state' => true,
+			'result' => sizeFormat($size['size']),
+			'comment' => '',
+			'key' => 'database::size'
 		);
 
 		$value = self::checkSpaceLeft(self::getTmpFolder());
@@ -1237,7 +1250,6 @@ class jeedom {
 			cron::clean();
 			report::clean();
 			DB::optimize();
-			cache::clean();
 			listener::clean();
 			user::regenerateHash();
 			jeeObject::cronDaily();
@@ -1264,6 +1276,13 @@ class jeedom {
 	public static function cronHourly() {
 		try {
 			cache::set('hour', strtotime('UTC'));
+		} catch (Exception $e) {
+			log::add('jeedom', 'error', $e->getMessage());
+		} catch (Error $e) {
+			log::add('jeedom', 'error', $e->getMessage());
+		}
+		try {
+			cache::clean();
 		} catch (Exception $e) {
 			log::add('jeedom', 'error', $e->getMessage());
 		} catch (Error $e) {
@@ -1734,9 +1753,12 @@ class jeedom {
 		return round(disk_free_space($path) / disk_total_space($path) * 100);
 	}
 
-	public static function getTmpFolder($_plugin = null) {
+	public static function getTmpFolder($_plugin = '') {
+		if(isset(self::$cache['getTmpFolder::' . $_plugin])){
+			return self::$cache['getTmpFolder::' . $_plugin];
+		}
 		$return = '/' . trim(config::byKey('folder::tmp'), '/');
-		if ($_plugin !== null) {
+		if ($_plugin !== '') {
 			$return .= '/' . $_plugin;
 		}
 		if (!file_exists($return)) {
@@ -1744,6 +1766,7 @@ class jeedom {
 			$cmd = system::getCmdSudo() . 'chown -R ' . system::get('www-uid') . ':' . system::get('www-gid') . ' ' . $return . ';';
 			com_shell::execute($cmd);
 		}
+		self::$cache['getTmpFolder::' . $_plugin] = $return;
 		return $return;
 	}
 
@@ -1788,6 +1811,8 @@ class jeedom {
 			$result = 'Atlas';
 		} else if (strpos($hostname, 'Luna') !== false) {
 			$result = 'Luna';
+		} else if (strpos(shell_exec('cat /proc/1/sched | head -n 1'),'systemd') === false){
+			$result = 'docker';
 		}
 		config::save('hardware_name', $result);
 		return config::byKey('hardware_name');

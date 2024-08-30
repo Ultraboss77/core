@@ -283,24 +283,6 @@ if (!jeeFrontEnd.administration) {
           })
         },
         success: function(data) {
-          jeeP.updateCacheStats()
-          jeedomUtils.showAlert({
-            message: '{{Cache vidé}}',
-            level: 'success'
-          })
-        }
-      })
-    },
-    flushWidgetCache: function() {
-      jeedom.cache.flushWidget({
-        error: function(error) {
-          jeedomUtils.showAlert({
-            message: error.message,
-            level: 'danger'
-          })
-        },
-        success: function(data) {
-          jeeP.updateCacheStats()
           jeedomUtils.showAlert({
             message: '{{Cache vidé}}',
             level: 'success'
@@ -317,24 +299,10 @@ if (!jeeFrontEnd.administration) {
           })
         },
         success: function(data) {
-          jeeP.updateCacheStats()
           jeedomUtils.showAlert({
             message: '{{Cache nettoyé}}',
             level: 'success'
           })
-        }
-      })
-    },
-    updateCacheStats: function() {
-      jeedom.cache.stats({
-        error: function(error) {
-          jeedomUtils.showAlert({
-            message: error.message,
-            level: 'danger'
-          })
-        },
-        success: function(data) {
-          document.getElementById('span_cacheObject').innerHTML = data.count
         }
       })
     },
@@ -1333,6 +1301,20 @@ document.getElementById('updatetab').addEventListener('click', function(event) {
     return
   }
 
+  if (_target = event.target.closest('#bt_refreshListBranch')) {
+    jeedom.cache.remove({
+      key: 'core::branch::default::list',
+      error: function(error) {
+        jeedomUtils.showAlert({
+          message: error.message,
+          level: 'danger'
+        })
+      },
+      success: function(data) {
+        window.location.reload();
+      }
+    })
+  }
 })
 
 document.getElementById('updatetab').addEventListener('change', function(event) {
@@ -1366,12 +1348,6 @@ document.getElementById('cachetab').addEventListener('click', function(event) {
         jeeP.flushCache()
       }
     })
-    return
-  }
-
-  if (_target = event.target.closest('#bt_flushWidgetCache')) {
-    jeedomUtils.hideAlert()
-    jeeP.flushWidgetCache()
     return
   }
 })
