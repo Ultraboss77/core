@@ -93,32 +93,7 @@ if (!jeedomUI) {
       if (init(_params) == '') {
         _params = {}
       }
-      var cmds = []
-      //Get all commands for display default eqLogic:
-      document.querySelectorAll('div.eqLogic-widget:not(div.eqLogic_layout_table)').forEach(function(el_eqLogic) {
-        var order = 1
-        el_eqLogic.querySelectorAll('.cmd').forEach(function(el_cmd) {
-          var cmd = {}
-          cmd.id = el_cmd.getAttribute('data-cmd_id') || undefined
-          cmd.order = order
-          cmds.push(cmd)
-          order++
-        })
-      })
-      //Get all commands for display table eqLogic:
-      document.querySelectorAll('div.eqLogic-widget.eqLogic_layout_table').forEach(function(el_eqLogic) {
-        var order = 1
-        el_eqLogic.querySelectorAll('.cmd').forEach(function(el_cmd) {
-          var cmd = {}
-          cmd.id = el_cmd.getAttribute('data-cmd_id') || undefined
-          cmd.line = el_cmd.closest('td')?.getAttribute('data-line') || undefined
-          cmd.column = el_cmd.closest('td')?.getAttribute('data-column') || undefined
-          cmd.order = order
-          cmds.push(cmd)
-          order++
-        })
-      })
-
+      
       //Get size/order tile:
       var eqLogics = []
       var scenarios = []
@@ -150,14 +125,6 @@ if (!jeedomUI) {
           eqLogics: eqLogics,
           error: function (error) {
             jeedomUtils.showAlert({message: error.message, level: 'danger'})
-          },
-          success:function(data){
-            jeedom.cmd.setOrder({
-              cmds: cmds,
-              error: function (error) {
-                jeedomUtils.showAlert({message: error.message, level: 'danger'})
-              }
-            });
           }
         })
         jeedom.scenario.setOrder({
@@ -197,14 +164,6 @@ if (!jeedomUI) {
           components: components,
           error: function (error) {
             jeedomUtils.showAlert({message: error.message, level: 'danger'})
-          },
-          success:function(data){
-            jeedom.cmd.setOrder({
-              cmds: cmds,
-              error: function (error) {
-                jeedomUtils.showAlert({message: error.message, level: 'danger'})
-              }
-            })
           }
         })
       }
