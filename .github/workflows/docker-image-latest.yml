@@ -1,7 +1,6 @@
 name: Docker Hub Image CI Builder
 
 on:
-  push:
 
   # this is to manually trigger the worklow
   workflow_dispatch:
